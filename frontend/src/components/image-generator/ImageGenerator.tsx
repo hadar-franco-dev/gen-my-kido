@@ -13,6 +13,8 @@ const PROMPT_SUGGESTIONS = [
   "An underwater scene with colorful coral reefs and exotic fish",
 ] as string[]
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
 export function ImageGenerator() {
   const { preview, handleFile, clearImage } = useImageUpload()
   const [prompt, setPrompt] = useState("")
@@ -30,16 +32,20 @@ export function ImageGenerator() {
       setIsGenerating(true)
       setError(null)
 
-      const response = await fetch('/api/generate', {
+      const response = await fetch(`${API_URL}/images/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({
+          prompt,
+          baseImage: preview,
+        }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to generate image')
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to generate image')
       }
 
       const data = await response.json()
@@ -50,7 +56,7 @@ export function ImageGenerator() {
       }
     } catch (err) {
       console.error("Error generating image:", err)
-      setError("Failed to generate image. Please try again.")
+      setError(err instanceof Error ? err.message : "Failed to generate image. Please try again.")
     } finally {
       setIsGenerating(false)
     }

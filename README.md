@@ -1,84 +1,97 @@
-# GenMyKido - AI Image Generator
+# GenMyKido - AI Image Generation Platform
 
-An AI-powered image generator built with Next.js that helps create unique images for children's stories. This project uses OpenAI's DALL-E model to generate images based on text prompts.
+A full-stack application that leverages Leonardo.ai's API to generate AI images based on user prompts.
 
 ## Project Structure
 
-The project is divided into two main parts:
-
 ```
-/
+.
 ├── frontend/          # Next.js frontend application
-│   ├── src/          # Source code
-│   │   ├── app/      # Next.js app router
-│   │   ├── components/  # React components
-│   │   └── lib/      # Utilities and configurations
-│   ├── public/       # Static assets
-│   └── ...          # Configuration files
-│
-└── backend/          # Backend services (coming soon)
+├── backend/          # Express.js backend API
+│   ├── src/
+│   │   ├── config/   # Configuration files
+│   │   ├── controllers/  # Request handlers
+│   │   ├── middleware/   # Express middleware
+│   │   ├── routes/      # API routes
+│   │   ├── services/    # Business logic
+│   │   └── types/       # TypeScript type definitions
+│   └── tests/          # Test files
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- Leonardo.ai API key
+
+### Environment Setup
+
+1. Backend Setup:
+   ```bash
+   cd backend
+   cp .env.example .env
+   # Add your Leonardo API key to .env
+   npm install
+   npm run dev
+   ```
+
+2. Frontend Setup:
+   ```bash
+   cd frontend
+   cp .env.example .env.local
+   npm install
+   npm run dev
+   ```
+
+### API Endpoints
+
+#### Generate Image
+- **POST** `/api/images/generate`
+- **Body**:
+  ```json
+  {
+    "prompt": "Your image description",
+    "negativePrompt": "Things to avoid in the image (optional)"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "imageUrl": "URL to generated image",
+    "generationId": "Unique generation ID"
+  }
+  ```
+
+### Testing
+
+Run the test suite:
+```bash
+cd backend
+npm test
 ```
 
 ## Features
 
-- Image upload (drag-and-drop and click-to-browse)
-- AI image generation with text prompts
-- Modern, responsive UI with animations
-- Download generated images
-- Prompt suggestions
+- Image generation using Leonardo.ai API
+- Real-time generation status updates
+- Error handling and validation
+- Rate limiting
+- TypeScript support
+- Automated testing
 
-## Getting Started
+## Tech Stack
 
-1. Clone the repository:
-```bash
-git clone https://github.com/hadar-franco-dev/gen-my-kido.git
-cd gen-my-kido
-```
+- **Frontend**: Next.js, React, TypeScript
+- **Backend**: Express.js, TypeScript
+- **Testing**: Jest
+- **API**: Leonardo.ai
 
-2. Set up the frontend:
-```bash
-cd frontend
-npm install
-```
+## Contributing
 
-3. Create a `.env.local` file in the frontend directory and add your OpenAI API key:
-```bash
-OPENAI_API_KEY=your_api_key_here
-```
-
-4. Run the development server:
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
-
-## Technologies Used
-
-### Frontend
-- [Next.js](https://nextjs.org) - React framework
-- [OpenAI API](https://openai.com) - AI image generation
-- [Tailwind CSS](https://tailwindcss.com) - Styling
-- [Shadcn/ui](https://ui.shadcn.com) - UI components
-- [Framer Motion](https://www.framer.com/motion) - Animations
-
-### Backend (Planned)
-- Node.js/Express.js or NestJS
-- PostgreSQL
-- Redis
-- AWS S3
-- Docker
-
-## Learn More
-
-To learn more about the technologies used in this project:
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [OpenAI API Documentation](https://platform.openai.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-
-## Deployment
-
-The frontend can be deployed using [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
