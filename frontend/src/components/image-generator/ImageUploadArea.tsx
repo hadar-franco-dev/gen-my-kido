@@ -20,6 +20,7 @@ export function ImageUploadArea({
     fileInputRef,
     handleDrop,
     handleDragOver,
+    handleDragEnter,
     handleDragLeave,
     handleFileChange
   } = useDragAndDrop({ onFileAccepted, onError })
@@ -29,15 +30,23 @@ export function ImageUploadArea({
       ref={dropAreaRef}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
-      className={`relative overflow-hidden rounded-2xl backdrop-blur-sm transition-all duration-300 ${
-        isDragging
-          ? "bg-purple-900/30 border-2 border-purple-400 shadow-lg shadow-purple-500/20"
-          : "bg-gray-900/40 border border-gray-700 hover:border-purple-500/50"
-      }`}
+      className="relative overflow-hidden rounded-2xl backdrop-blur-sm transition-all duration-300 bg-gray-900/40 border border-gray-700 hover:border-purple-500/50"
     >
+      {/* Drag overlay */}
+      {isDragging && (
+        <div className="absolute inset-0 z-50 bg-purple-900/30 border-2 border-purple-400 rounded-2xl flex items-center justify-center">
+          <div className="bg-purple-900/80 p-6 rounded-xl backdrop-blur-sm">
+            <h3 className="text-xl font-semibold text-white">Drop your image here</h3>
+          </div>
+        </div>
+      )}
+
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10 pointer-events-none"></div>
 
+      {/* Content */}
       <div className="p-8 text-center cursor-pointer" onClick={() => fileInputRef.current?.click()}>
         {preview ? (
           <div className="relative">
