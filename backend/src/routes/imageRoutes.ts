@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { generateImage, validateGenerateImage } from '../controllers/imageController';
+import { generateImage, generateImageFromImage, validateGenerateImage, validateImageFromImage } from '../controllers/imageController';
 import rateLimit from 'express-rate-limit';
 
 const router = Router();
@@ -12,5 +12,6 @@ const imageLimiter = rateLimit({
 });
 
 router.post('/generate', imageLimiter, validateGenerateImage, generateImage);
+router.post('/generate-from-image', imageLimiter, validateImageFromImage, generateImageFromImage);
 
 export default router; 

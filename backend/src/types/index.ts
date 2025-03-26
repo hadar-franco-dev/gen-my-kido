@@ -4,6 +4,13 @@ export interface GenerateImageRequest {
   negativePrompt?: string;
 }
 
+export interface ImageFromImageRequest {
+  prompt: string;
+  imageUrl: string;
+  negativePrompt?: string;
+  strength?: number;
+}
+
 export interface GenerateImageResponse {
   imageUrl: string;
   generationId: string;
@@ -13,6 +20,14 @@ export interface LeonardoApiError {
   error: string;
   message: string;
   statusCode: number;
+}
+
+export interface UploadInitImageResponse {
+  uploadInitImage: {
+    id: string;
+    url: string;
+    fields: string;
+  };
 }
 
 export interface LeonardoConfig {
