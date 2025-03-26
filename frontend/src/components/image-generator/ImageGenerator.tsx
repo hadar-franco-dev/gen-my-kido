@@ -5,6 +5,7 @@ import { useImageUpload } from "@/lib/hooks/useImageUpload"
 import { ImageUploadArea } from "./ImageUploadArea"
 import { PromptInput } from "./PromptInput"
 import { GeneratedImage } from "./GeneratedImage"
+import { generateImage, generateImageFromImage, fileToDataUrl } from "@/lib/services/imageService"
 
 const PROMPT_SUGGESTIONS = [
   "A futuristic cityscape with neon lights and flying cars",
@@ -13,53 +14,77 @@ const PROMPT_SUGGESTIONS = [
   "An underwater scene with colorful coral reefs and exotic fish",
 ] as string[]
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
 export function ImageGenerator() {
-  const { preview, handleFile, clearImage } = useImageUpload()
+  const { file, preview, handleFile, clearImage } = useImageUpload()
   const [prompt, setPrompt] = useState("")
   const [generatedImage, setGeneratedImage] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [generationProgress, setGenerationProgress] = useState(0)
 
   const generateAIImage = async () => {
     if (!prompt.trim()) {
-      setError("Please enter a prompt")
+      setError("Please enter a prompt to describe the image you want to generate")
       return
     }
 
     try {
       setIsGenerating(true)
       setError(null)
+      setGenerationProgress(0)
+      
+      // Start progress animation
+      const progressInterval = startProgressSimulation()
 
-      const response = await fetch(`${API_URL}/images/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      let result;
+      
+      // Handle different generation paths based on whether an image is uploaded
+      if (file) {
+        // If we have both an image and a prompt, use image-to-image generation
+        const imageUrl = preview || await fileToDataUrl(file)
+        
+        result = await generateImageFromImage({
           prompt,
-          baseImage: preview,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to generate image')
+          imageUrl,
+          negativePrompt: ""
+        })
+      } else {
+        // If we only have a prompt, use text-to-image generation
+        result = await generateImage({
+          prompt,
+          negativePrompt: ""
+        })
       }
 
-      const data = await response.json()
-      if (data.imageUrl) {
-        setGeneratedImage(data.imageUrl)
+      // Clear the progress simulation
+      clearInterval(progressInterval)
+      
+      if (result.imageUrl) {
+        setGeneratedImage(result.imageUrl)
+        setGenerationProgress(100)
       } else {
         throw new Error('No image URL in response')
       }
     } catch (err) {
       console.error("Error generating image:", err)
       setError(err instanceof Error ? err.message : "Failed to generate image. Please try again.")
+      setGenerationProgress(0)
     } finally {
       setIsGenerating(false)
     }
+  }
+
+  // Simulate progress for better user experience during API call
+  const startProgressSimulation = () => {
+    return setInterval(() => {
+      setGenerationProgress(prev => {
+        // Gradually increase up to 90%, saving the last 10% for actual completion
+        if (prev < 90) {
+          return prev + Math.random() * 5
+        }
+        return prev
+      })
+    }, 300)
   }
 
   const downloadImage = () => {
@@ -106,6 +131,8 @@ export function ImageGenerator() {
 
           <GeneratedImage
             imageUrl={generatedImage}
+            isGenerating={isGenerating}
+            progress={generationProgress}
             onDownload={downloadImage}
           />
         </div>

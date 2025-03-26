@@ -1,12 +1,14 @@
-import { ImageIcon, Download } from "lucide-react"
+import { ImageIcon, Download, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface GeneratedImageProps {
   imageUrl: string | null
+  isGenerating: boolean
+  progress: number
   onDownload: () => void
 }
 
-export function GeneratedImage({ imageUrl, onDownload }: GeneratedImageProps) {
+export function GeneratedImage({ imageUrl, isGenerating, progress, onDownload }: GeneratedImageProps) {
   return (
     <div className="backdrop-blur-sm bg-gray-900/40 rounded-2xl border border-gray-700 p-6 h-full flex flex-col relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-pink-500/10 pointer-events-none"></div>
@@ -19,7 +21,28 @@ export function GeneratedImage({ imageUrl, onDownload }: GeneratedImageProps) {
       <div className="flex-1 flex items-center justify-center bg-gray-800/50 rounded-xl p-4 border border-gray-700 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/placeholder.svg?height=50&width=50')] opacity-5 bg-repeat"></div>
 
-        {imageUrl ? (
+        {isGenerating ? (
+          <div className="text-center">
+            <div className="relative w-32 h-32 mx-auto mb-6">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 blur-lg opacity-30 animate-pulse"></div>
+              <div className="relative h-full w-full flex items-center justify-center">
+                <RefreshCw className="h-16 w-16 text-purple-300 animate-spin" />
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold mb-2 text-white">Creating your masterpiece...</h3>
+            <p className="text-gray-400 mb-4">This may take a few moments</p>
+            
+            {/* Progress bar */}
+            <div className="w-full max-w-md mx-auto bg-gray-700 rounded-full h-2.5 mb-4 overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-purple-500 to-blue-500 h-2.5 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+            
+            <p className="text-gray-500 text-sm">AI is working its magic...</p>
+          </div>
+        ) : imageUrl ? (
           <div className="relative max-w-full max-h-full">
             <img
               src={imageUrl}
@@ -42,7 +65,7 @@ export function GeneratedImage({ imageUrl, onDownload }: GeneratedImageProps) {
         )}
       </div>
 
-      {imageUrl && (
+      {imageUrl && !isGenerating && (
         <div className="mt-4">
           <Button
             variant="outline"
