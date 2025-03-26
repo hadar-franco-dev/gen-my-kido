@@ -152,6 +152,7 @@ export class LeonardoService {
         const generation = result.data.generations_by_pk;
         
         if (generation.status === 'COMPLETE') {
+          console.log('Generation complete:', generation.generated_images[0].url);
           return {
             imageUrl: generation.generated_images[0].url,
             generationId,
@@ -159,6 +160,7 @@ export class LeonardoService {
         }
 
         if (generation.status === 'FAILED') {
+          console.log('Generation failed:', generation.error);
           throw new Error('Image generation failed');
         }
 
