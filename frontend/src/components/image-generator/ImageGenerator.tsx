@@ -5,7 +5,7 @@ import { useImageUpload } from "@/lib/hooks/useImageUpload"
 import { ImageUploadArea } from "./ImageUploadArea"
 import { PromptInput } from "./PromptInput"
 import { GeneratedImage } from "./GeneratedImage"
-import { generateImage, generateImageFromImage, fileToDataUrl } from "@/lib/services/imageService"
+import { generateImage, generateImageFromImage } from "@/lib/services/imageService"
 
 const PROMPT_SUGGESTIONS = [
   "A futuristic cityscape with neon lights and flying cars",
@@ -15,7 +15,15 @@ const PROMPT_SUGGESTIONS = [
 ] as string[]
 
 export function ImageGenerator() {
-  const { file, preview, handleFile, clearImage } = useImageUpload()
+  const { 
+    file, 
+    preview,
+    isUploading,
+    error: uploadError,
+    handleFile, 
+    uploadToSupabase,
+    clearImage 
+  } = useImageUpload()
   const [prompt, setPrompt] = useState("")
   const [generatedImage, setGeneratedImage] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -24,55 +32,84 @@ export function ImageGenerator() {
 
   const generateAIImage = async () => {
     if (!prompt.trim()) {
-      setError("Please enter a prompt to describe the image you want to generate")
-      return
+      setError("Please enter a prompt to describe the image you want to generate");
+      return;
     }
 
     try {
-      setIsGenerating(true)
-      setError(null)
-      setGenerationProgress(0)
+      setIsGenerating(true);
+      setError(null);
+      setGenerationProgress(0);
+      
+      console.log('Starting image generation with prompt:', prompt);
       
       // Start progress animation
-      const progressInterval = startProgressSimulation()
+      const progressInterval = startProgressSimulation();
 
       let result;
       
       // Handle different generation paths based on whether an image is uploaded
       if (file) {
         // If we have both an image and a prompt, use image-to-image generation
-        const imageUrl = preview || await fileToDataUrl(file)
+        // First upload the image to Supabase to get a public URL
+        console.log('Uploading image to Supabase before generation...');
+        
+        const startTime = Date.now();
+        const imageUrl = await uploadToSupabase();
+        const uploadTime = Date.now() - startTime;
+        
+        if (!imageUrl) {
+          throw new Error('Failed to upload image to storage');
+        }
+        
+        const isDataUrl = imageUrl.startsWith('data:');
+        console.log(`Image ${isDataUrl ? 'converted to data URL' : 'uploaded to Supabase'} in ${uploadTime}ms: ${isDataUrl ? '(data URL)' : imageUrl}`);
+        console.log('Starting image-to-image generation...');
         
         result = await generateImageFromImage({
           prompt,
-          imageUrl,
-          negativePrompt: ""
-        })
+          imageData: imageUrl, // Use the public URL or data URL
+          negativePrompt: "",
+          strength: 0.7 // Default strength value
+        });
+        console.log('Image-to-image generation completed:', result);
       } else {
         // If we only have a prompt, use text-to-image generation
+        console.log('Starting text-to-image generation...');
         result = await generateImage({
           prompt,
           negativePrompt: ""
-        })
+        });
+        console.log('Text-to-image generation completed');
       }
 
       // Clear the progress simulation
-      clearInterval(progressInterval)
+      clearInterval(progressInterval);
       
       if (result.imageUrl) {
-        setGeneratedImage(result.imageUrl)
-        setGenerationProgress(100)
+        setGeneratedImage(result.imageUrl);
+        setGenerationProgress(100);
       } else {
-        throw new Error('No image URL in response')
+        throw new Error('No image URL in response');
       }
     } catch (err) {
-      console.error("Error generating image:", err)
-      setError(err instanceof Error ? err.message : "Failed to generate image. Please try again.")
-      setGenerationProgress(0)
+      console.error("Error generating image:", err);
+      setGeneratedImage(null); // Clear any previously generated image
+      
+      // Extract the most meaningful error message
+      let errorMessage = "Failed to generate image. Please try again.";
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        errorMessage = String(err.message);
+      }
+      
+      setError(errorMessage);
+      setGenerationProgress(0);
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   // Simulate progress for better user experience during API call
   const startProgressSimulation = () => {
@@ -95,6 +132,10 @@ export function ImageGenerator() {
     link.download = "ai-generated-image.png"
     link.click()
   }
+
+  // Combine upload error and generation error
+  const displayError = uploadError || error;
+  const isLoading = isUploading || isGenerating;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-purple-950 text-white">
@@ -121,8 +162,8 @@ export function ImageGenerator() {
 
             <PromptInput
               prompt={prompt}
-              isGenerating={isGenerating}
-              error={error}
+              isGenerating={isLoading}
+              error={displayError}
               promptSuggestions={PROMPT_SUGGESTIONS}
               onPromptChange={setPrompt}
               onGenerate={generateAIImage}
