@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { LeonardoService } from '../services/leonardoService';
-import { GenerateImageRequest, ImageFromImageRequest } from '../types';
+import { GenerateImageRequest, ImageFromImageRequest } from '../types/index';
 
 export const validateGenerateImage = [
   body('prompt')
@@ -31,8 +31,11 @@ export const validateImageFromImage = [
     .trim()
     .notEmpty()
     .withMessage('Image URL is required')
-    .isURL()
-    .withMessage('Image URL must be a valid URL'),
+    .custom((value) => {
+      // Accept both data URLs and regular URLs
+      return value.startsWith('data:image/') || /^https?:\/\//.test(value);
+    })
+    .withMessage('Image URL must be a valid URL or data URL'),
   body('negativePrompt')
     .optional()
     .isLength({ max: 500 })
@@ -77,11 +80,34 @@ export const generateImageFromImage = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    console.log('Received image-from-image generation request');
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
+      console.error('Validation errors:', errors.array());
+      res.status(400).json({ 
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request parameters',
+        details: errors.array() 
+      });
       return;
     }
+
+    // Validate required fields
+    const { prompt, imageUrl } = req.body;
+    if (!prompt || !imageUrl) {
+      console.error('Missing required fields:', { prompt: !!prompt, imageUrl: !!imageUrl });
+      res.status(400).json({ 
+        error: 'MISSING_FIELDS',
+        message: 'Missing required fields: prompt and imageUrl are required' 
+      });
+      return;
+    }
+
+    // Log image type without logging entire content
+    console.log('Image data type:', typeof imageUrl === 'string' ? 
+      (imageUrl.startsWith('data:image/') ? 'data URL' : 'URL') : 
+      typeof imageUrl);
 
     const request: ImageFromImageRequest = {
       prompt: req.body.prompt,
@@ -90,12 +116,19 @@ export const generateImageFromImage = async (
       strength: req.body.strength,
     };
 
-    console.log('Request:', request);
+    console.log('Calling LeonardoService with image-to-image request');
     const result = await LeonardoService.generateImageFromImage(request);
+    console.log('Generation successful, returning result');
     res.json(result);
-    console.log('Response:', result);
-    
   } catch (error) {
-    next(error);
+    console.error('Error in generateImageFromImage controller:', error);
+    if (error instanceof Error) {
+      res.status(500).json({ 
+        error: 'GENERATION_ERROR',
+        message: error.message 
+      });
+    } else {
+      next(error);
+    }
   }
 }; 

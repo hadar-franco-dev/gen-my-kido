@@ -30,6 +30,11 @@ export interface UploadInitImageResponse {
   };
 }
 
+export interface UploadImageResult {
+  id: string;
+  url: string;
+}
+
 export interface LeonardoConfig {
   apiKey: string;
   apiUrl: string;

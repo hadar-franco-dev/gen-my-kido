@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { LeonardoApiError } from '../types';
+import { LeonardoApiError } from '../types/index';
 
 export const errorHandler = (
   error: Error | LeonardoApiError,

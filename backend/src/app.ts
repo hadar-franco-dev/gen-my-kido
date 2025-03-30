@@ -6,6 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import imageRoutes from './routes/imageRoutes';
+import uploadRoutes from './routes/uploadRoutes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Routes
 app.use('/api/images', imageRoutes);
+app.use('/api/images', uploadRoutes);
 
 // Error handling
 app.use(errorHandler);

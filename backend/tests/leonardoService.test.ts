@@ -104,6 +104,7 @@ describe('LeonardoService', () => {
     const mockImageUrl = 'https://example.com/test-image.jpg';
     const mockInitImageId = 'test-init-image-id';
     const mockPresignedUrl = 'https://example.com/presigned-url';
+    const mockOutputUrl = 'data:image/jpeg;base64,ZmFrZS1pbWFnZS1kYXRh';
     const mockFields = { field1: 'value1', field2: 'value2' };
 
     it('should successfully upload an image', async () => {
@@ -131,7 +132,10 @@ describe('LeonardoService', () => {
       });
 
       const result = await LeonardoService.uploadImage(mockImageUrl);
-      expect(result).toBe(mockInitImageId);
+      expect(result).toEqual({
+        id: mockInitImageId,
+        url: expect.stringContaining('data:image/jpeg;base64,')
+      });
     });
 
     it('should handle upload failure', async () => {
@@ -157,10 +161,14 @@ describe('LeonardoService', () => {
     const mockInitImageId = 'test-init-image-id';
     const mockGenerationId = 'test-generation-id';
     const mockImageUrl = 'https://example.com/generated-image.jpg';
+    const mockUploadResult = { 
+      id: mockInitImageId, 
+      url: 'https://example.com/uploaded-image.jpg' 
+    };
 
     it('should successfully generate an image from image', async () => {
       // Mock the upload image response
-      jest.spyOn(LeonardoService, 'uploadImage').mockResolvedValue(mockInitImageId);
+      jest.spyOn(LeonardoService, 'uploadImage').mockResolvedValue(mockUploadResult);
 
       // Mock the generation response
       mockedAxios.create.mockReturnValue({
@@ -188,7 +196,7 @@ describe('LeonardoService', () => {
 
     it('should handle generation failure', async () => {
       // Mock the upload image response
-      jest.spyOn(LeonardoService, 'uploadImage').mockResolvedValue(mockInitImageId);
+      jest.spyOn(LeonardoService, 'uploadImage').mockResolvedValue(mockUploadResult);
 
       // Mock the generation response with failure
       mockedAxios.create.mockReturnValue({
@@ -213,7 +221,7 @@ describe('LeonardoService', () => {
 
     it('should handle generation timeout', async () => {
       // Mock the upload image response
-      jest.spyOn(LeonardoService, 'uploadImage').mockResolvedValue(mockInitImageId);
+      jest.spyOn(LeonardoService, 'uploadImage').mockResolvedValue(mockUploadResult);
 
       // Mock the generation response with pending status
       mockedAxios.create.mockReturnValue({
