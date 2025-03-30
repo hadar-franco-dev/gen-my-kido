@@ -29,6 +29,10 @@ interface GenerationPayload {
   promptMagic: boolean;
   public: boolean;
   negative_prompt?: string;
+  presetStyle?: string;
+  generationMode?: string;
+  imageGuidance?: string;
+  finetunedModel?: string;
 }
 
 interface ImageFromImagePayload extends GenerationPayload {
@@ -63,7 +67,17 @@ export class LeonardoService {
         ...(request.negativePrompt && { negative_prompt: request.negativePrompt })
       };
       
-      console.log('Generation payload:', payload);
+      console.log('\n=== Leonardo API Request Details ===');
+      console.log('Endpoint:', `${config.apiUrl}/generations`);
+      console.log('Method: POST');
+      console.log('Headers:', {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'authorization': 'Bearer [REDACTED]'
+      });
+      console.log('Request Body:', JSON.stringify(payload, null, 2));
+      console.log('===================================\n');
+      
       console.log('Sending request to Leonardo API...');
       
       const generationResponse = await leonardoApi.post('/generations', payload);
@@ -165,17 +179,12 @@ export class LeonardoService {
       });
       console.log('Upload to presigned URL successful');
       
-      // Step 4: Create public URL
-      console.log('\nStep 4: Creating public URL...');
-      const base64Image = imageBuffer.toString('base64');
-      const mimeType = 'image/jpeg';
-      const publicImageUrl = `data:${mimeType};base64,${base64Image}`;
-      
+      // Return the ID and original URL
       console.log('Upload process completed successfully');
-      console.log('Returning:', { id, url: publicImageUrl });
+      console.log('Returning:', { id, url: imageUrl });
       return {
         id,
-        url: publicImageUrl
+        url: imageUrl
       };
     } catch (error) {
       console.error('\nError in uploadImage:', error);
