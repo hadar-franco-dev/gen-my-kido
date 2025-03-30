@@ -69,7 +69,7 @@ export function GeneratedImage({ imageUrl, isGenerating, progress, onDownload }:
         <div className="mt-4">
           <Button
             variant="outline"
-            className="w-full border-gray-700 text-white hover:bg-gray-800 hover:text-purple-300"
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
             onClick={onDownload}
           >
             <Download className="mr-2 h-5 w-5" />
