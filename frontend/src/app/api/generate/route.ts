@@ -9,7 +9,7 @@ if (!LEONARDO_API_KEY) {
 
 export async function POST(req: Request) {
   try {
-    const { prompt } = await req.json()
+    const { prompt, presetStyle, generationMode, imageGuidance, finetunedModel } = await req.json()
 
     if (!prompt) {
       return NextResponse.json(
@@ -17,6 +17,17 @@ export async function POST(req: Request) {
         { status: 400 }
       )
     }
+
+    const requestBody = {
+      prompt,
+      modelId: '2067ae52-33fd-4a82-bb92-c2c55e7d2786', // Updated model ID
+      height: 1024,
+      width: 1024,
+      presetStyle,
+      generationMode,
+      imageGuidance,
+      finetunedModel
+    };
 
     // First, initiate the generation
     const generationResponse = await fetch(`${LEONARDO_API_URL}/generations`, {
@@ -26,12 +37,7 @@ export async function POST(req: Request) {
         'content-type': 'application/json',
         'authorization': `Bearer ${LEONARDO_API_KEY}`,
       },
-      body: JSON.stringify({
-        prompt,
-        modelId: '6bef9f1b-29cb-40c7-b9df-32b51c1f67d3', // Default model ID
-        height: 512,
-        width: 512,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!generationResponse.ok) {
