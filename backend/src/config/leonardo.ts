@@ -8,6 +8,10 @@ interface LeonardoConfig {
     height: number;
     promptMagic: boolean;
     public: boolean;
+    presetStyle: string;
+    generationMode: string;
+    imageGuidance: string;
+    finetunedModel: string;
   };
   polling: {
     maxAttempts: number;
@@ -22,13 +26,17 @@ if (!process.env.LEONARDO_API_KEY) {
 const config: LeonardoConfig = {
   apiKey: process.env.LEONARDO_API_KEY,
   apiUrl: 'https://cloud.leonardo.ai/api/rest/v1',
-  defaultModel: 'ac614f96-1082-45bf-be9d-757f2d31c174', // Leonardo Creative
+  defaultModel: '2067ae52-33fd-4a82-bb92-c2c55e7d2786', // Updated model ID
   defaultSettings: {
     num_images: 1,
     width: 1024,
     height: 1024,
     promptMagic: false,
     public: false,
+    presetStyle: 'Stylized Illustration',
+    generationMode: 'Fast',
+    imageGuidance: 'Mid',
+    finetunedModel: 'AlbedoBase XL'
   },
   polling: {
     maxAttempts: 30,
