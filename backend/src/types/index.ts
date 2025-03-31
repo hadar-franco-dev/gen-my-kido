@@ -2,6 +2,10 @@ export interface GenerateImageRequest {
   prompt: string;
   baseImage?: string;
   negativePrompt?: string;
+  presetStyle?: string;
+  generationMode?: string;
+  imageGuidance?: string;
+  finetunedModel?: string;
 }
 
 export interface ImageFromImageRequest {
@@ -45,6 +49,10 @@ export interface LeonardoConfig {
     num_images: number;
     promptMagic: boolean;
     public: boolean;
+    presetStyle: string;
+    generationMode: string;
+    imageGuidance: string;
+    finetunedModel: string;
   };
   polling: {
     maxAttempts: number;
