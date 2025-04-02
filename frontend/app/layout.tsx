@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import { LanguageProvider } from "./contexts/language-context"
-import type React from "react"
+import type { ReactNode } from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -12,13 +12,13 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "MyKidStory.ai",
   description: "סיפורים לילדים",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <html lang="he" dir="rtl" suppressHydrationWarning>

@@ -18,31 +18,54 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full overflow-hidden">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="relative w-8 h-8 overflow-hidden rounded-full border border-border/50 hover:border-border"
+        >
           <Image
             src={language === "he" ? "/images/israel-flag.svg" : "/images/us-flag.svg"}
             alt={language === "he" ? "Hebrew" : "English"}
-            width={24}
-            height={24}
-            className="rounded-full object-cover"
+            fill
+            className="object-cover"
+            priority
+            sizes="32px"
           />
           <span className="sr-only">{t("language")}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem
           onClick={() => handleLanguageChange("he")}
-          className={`flex items-center gap-2 ${language === "he" ? "bg-primary/10" : ""}`}
+          className={`flex items-center gap-3 ${language === "he" ? "bg-primary/10" : ""}`}
         >
-          <Image src="/images/israel-flag.svg" alt="Hebrew" width={20} height={20} className="rounded-full" />
-          {t("language.he")}
+          <div className="relative w-6 h-6 overflow-hidden rounded-full border border-border/50">
+            <Image 
+              src="/images/israel-flag.svg" 
+              alt="Hebrew" 
+              fill
+              className="object-cover" 
+              sizes="24px"
+              priority
+            />
+          </div>
+          <span className="font-medium">{t("language.he")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleLanguageChange("en")}
-          className={`flex items-center gap-2 ${language === "en" ? "bg-primary/10" : ""}`}
+          className={`flex items-center gap-3 ${language === "en" ? "bg-primary/10" : ""}`}
         >
-          <Image src="/images/us-flag.svg" alt="English" width={20} height={20} className="rounded-full" />
-          {t("language.en")}
+          <div className="relative w-6 h-6 overflow-hidden rounded-full border border-border/50">
+            <Image 
+              src="/images/us-flag.svg" 
+              alt="English" 
+              fill
+              className="object-cover" 
+              sizes="24px"
+              priority
+            />
+          </div>
+          <span className="font-medium">{t("language.en")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
