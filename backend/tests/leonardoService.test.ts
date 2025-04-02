@@ -5,20 +5,24 @@ import type { AxiosInstance, AxiosError } from 'axios';
 import { LeonardoService } from '../src/services/leonardoService';
 import { GenerateImageRequest, ImageFromImageRequest } from '../src/types/index';
 
-// Mock axios
-const mockAxiosInstance = {
-  post: jest.fn(),
-  get: jest.fn(),
-} as jest.Mocked<Pick<AxiosInstance, 'post' | 'get'>>;
+// Create mock instance inside the mock factory
+jest.mock('axios', () => {
+  const mockAxiosInstance = {
+    post: jest.fn(),
+    get: jest.fn(),
+  } as jest.Mocked<Pick<AxiosInstance, 'post' | 'get'>>;
 
-jest.mock('axios', () => ({
-  create: jest.fn(() => mockAxiosInstance),
-  isAxiosError: jest.fn((error: any): error is AxiosError => error?.isAxiosError === true),
-  get: jest.fn(),
-  post: jest.fn()
-}));
+  return {
+    create: jest.fn(() => mockAxiosInstance),
+    isAxiosError: jest.fn((error: any): error is AxiosError => error?.isAxiosError === true),
+    get: jest.fn(),
+    post: jest.fn(),
+    __mockAxiosInstance: mockAxiosInstance // Export for test access
+  };
+});
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockAxiosInstance = (axios as any).__mockAxiosInstance;
 
 describe('LeonardoService', () => {
   beforeEach(() => {
