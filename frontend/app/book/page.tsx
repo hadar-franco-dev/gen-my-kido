@@ -4,22 +4,32 @@ import { Book, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import FlipBook from "../components/FlipBook"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 export default function BookPage() {
-  // Sample book pages with alternating text and illustrations - expanded to 14 pages
+  // Transform the pages to match the Page interface
   const bookPages = [
     // Pages 1-2: Cover and introduction
     {
-      type: "cover",
-      title: "שלום כיתה א׳",
-      content: "סיפור מיוחד עבור דניאל",
+      content: (
+        <div className="text-right p-6">
+          <h2 className="text-2xl font-bold mb-4">שלום כיתה א׳</h2>
+          <div className="whitespace-pre-wrap">סיפור מיוחד עבור דניאל</div>
+        </div>
+      ),
       background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+      title: "שלום כיתה א׳",
+      text: "סיפור מיוחד עבור דניאל"
     },
     {
-      type: "text",
+      content: (
+        <div className="text-right p-6">
+          <h2 className="text-2xl font-bold mb-4">היום הראשון בבית הספר</h2>
+          <div className="whitespace-pre-wrap">דניאל התעורר בבוקר מתרגש מאוד. היום הוא היום הראשון שלו בכיתה א׳!\n\nאמא עזרה לו להתלבש בבגדים החדשים שקנו במיוחד ליום הזה. הוא לבש חולצה כחולה יפה ומכנסיים נוחים.</div>
+        </div>
+      ),
       title: "היום הראשון בבית הספר",
-      content:
-        "דניאל התעורר בבוקר מתרגש מאוד. היום הוא היום הראשון שלו בכיתה א׳!\n\nאמא עזרה לו להתלבש בבגדים החדשים שקנו במיוחד ליום הזה. הוא לבש חולצה כחולה יפה ומכנסיים נוחים.",
+      text: "דניאל התעורר בבוקר מתרגש מאוד. היום הוא היום הראשון שלו בכיתה א׳!\n\nאמא עזרה לו להתלבש בבגדים החדשים שקנו במיוחד ליום הזה. הוא לבש חולצה כחולה יפה ומכנסיים נוחים."
     },
 
     // Page 3: Text only
@@ -32,10 +42,18 @@ export default function BookPage() {
 
     // Page 4: Illustration only
     {
-      type: "image",
-      imageUrl:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png",
+      content: (
+        <div className="relative w-full h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png"
+            alt="Story illustration"
+            fill
+            className="object-contain"
+          />
+        </div>
+      ),
       background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+      isImage: true
     },
 
     // Page 5: Text only
@@ -48,10 +66,18 @@ export default function BookPage() {
 
     // Page 6: Illustration only
     {
-      type: "image",
-      imageUrl:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png",
+      content: (
+        <div className="relative w-full h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png"
+            alt="Story illustration"
+            fill
+            className="object-contain"
+          />
+        </div>
+      ),
       background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+      isImage: true
     },
 
     // Page 7: Text only
@@ -64,10 +90,18 @@ export default function BookPage() {
 
     // Page 8: Illustration only
     {
-      type: "image",
-      imageUrl:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png",
+      content: (
+        <div className="relative w-full h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png"
+            alt="Story illustration"
+            fill
+            className="object-contain"
+          />
+        </div>
+      ),
       background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+      isImage: true
     },
 
     // NEW PAGES - Adding 4 more pages (9-12)
@@ -81,10 +115,18 @@ export default function BookPage() {
 
     // Page 10: Illustration only
     {
-      type: "image",
-      imageUrl:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png",
+      content: (
+        <div className="relative w-full h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png"
+            alt="Story illustration"
+            fill
+            className="object-contain"
+          />
+        </div>
+      ),
       background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+      isImage: true
     },
 
     // Page 11: Text only
@@ -97,10 +139,18 @@ export default function BookPage() {
 
     // Page 12: Illustration only
     {
-      type: "image",
-      imageUrl:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png",
+      content: (
+        <div className="relative w-full h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-frame-004-EE2TF6alJB15qTCyoP4zBWQFMa844A.png"
+            alt="Story illustration"
+            fill
+            className="object-contain"
+          />
+        </div>
+      ),
       background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+      isImage: true
     },
 
     // Pages 13-14: Conclusion
@@ -150,7 +200,7 @@ export default function BookPage() {
       </motion.div>
 
       <div className="max-w-5xl mx-auto mb-16">
-        <FlipBook initialPages={bookPages} width={900} height={500} editable={true} />
+        <FlipBook pages={bookPages} width={900} height={500} editable={true} />
       </div>
 
       <div className="text-center mt-10">
